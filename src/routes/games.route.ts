@@ -1,13 +1,16 @@
 import { Router } from "express";
-import { countGamesGenre, deleteById, findAllGames, insertGame, updateById } from "../controllers/games.controller.js";
+import { findAllGames, insertGame, deleteById, countGamesGenre, updateById, findGamesByGenre } from "../controllers/games.controller.js";
+import { validateBody } from "../middlewares/validation.middleware.js";
+import { GameWishlistRatingSchema, GameSchema, GameWishlistSchema } from "../schemas/game.schema.js";
 
 const router = Router();
 
 router.get("/games", findAllGames);
-router.post("/games", insertGame);
+router.post("/games", validateBody(GameSchema), insertGame);
 router.delete("/games/:id", deleteById);
-router.patch("/games/:id", updateById);
+router.post("/games/wishlist/:id", validateBody(GameWishlistRatingSchema), updateById);
 
-router.get("/genres", countGamesGenre);
+router.get("/games/genre/:id", findGamesByGenre);
+router.get("/games/count", countGamesGenre);
 
 export default router;

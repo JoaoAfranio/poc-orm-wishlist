@@ -1,18 +1,16 @@
 import { Request, Response } from "express";
 import { Game } from "../protocols/Game";
-import { countGenreByGames, deleteOne, findAll, findById, insertOne, updateOne } from "../repositories/games.repository.js";
-import { GameSchema } from "../schemas/game.schema.js";
+import { findAll, insertOne, deleteOne } from "../repositories/games.repository.js";
+import { countGamesByGenre, findGamesByGenreId, rateGame } from "../services/games.service.js";
 
 export async function insertGame(req: Request, res: Response) {
   const game = req.body as Game;
 
   try {
-    const { error } = GameSchema.validate(game);
-
-    if (error) return res.send({ message: error.message }).status(401);
-
     const result = await insertOne(game);
-    res.send(`Inserted ${result.rowCount} games`);
+    if (!result) return res.sendStatus(400);
+
+    res.send(`Game created successfully`);
   } catch (err) {
     console.log(err);
     res.sendStatus(500);
@@ -21,15 +19,19 @@ export async function insertGame(req: Request, res: Response) {
 
 export async function findAllGames(req: Request, res: Response) {
   const result = await findAll();
-  res.send(result.rows);
+  res.send(result);
 }
 
 export async function deleteById(req: Request, res: Response) {
   const id = req.params.id;
 
+  if (!id) return res.sendStatus(400);
+
   try {
     const result = await deleteOne(Number(id));
-    res.send(`Deleted ${result.rowCount} games`);
+    if (!result) return res.sendStatus(404);
+
+    res.send(`Game deleted successfully`);
   } catch (err) {
     console.log(err);
     res.sendStatus(500);
@@ -37,26 +39,41 @@ export async function deleteById(req: Request, res: Response) {
 }
 
 export async function updateById(req: Request, res: Response) {
-  const id = req.params.id;
-  const { rating } = req.body;
+  const idGame = req.params.id;
+  const { rating, idUser } = req.body as RatingRequest;
 
   try {
-    const game = await findById(Number(id));
+    const result = await rateGame(Number(idGame), Number(idUser), Number(rating));
 
-    if (game.rowCount === 0) return res.sendStatus(404);
+    if (!result) return res.sendStatus(400);
 
-    const result = await updateOne(Number(id), Number(rating));
-    res.send(`Updated ${result.rowCount} games`);
+    res.send(`Updated game successfully`);
   } catch (err) {
     console.log(err);
     res.sendStatus(500);
   }
 }
 
+type RatingRequest = { rating: Number; idUser: Number };
+
 export async function countGamesGenre(req: Request, res: Response) {
   try {
-    const result = await countGenreByGames();
-    res.send(result.rows);
+    const result = await countGamesByGenre();
+    res.send(result);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+}
+
+export async function findGamesByGenre(req: Request, res: Response) {
+  const id = req.params.id;
+
+  if (!id) return res.sendStatus(400);
+
+  try {
+    const result = await findGamesByGenreId(Number(id));
+    res.send(result);
   } catch (err) {
     console.log(err);
     res.sendStatus(500);
