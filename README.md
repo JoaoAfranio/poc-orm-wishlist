@@ -1,12 +1,9 @@
 
-# WishList Games
-
-The main goal with this project was to start developing a better understanding of typescript.
-
-
 ## API Reference
 
-#### Get all items
+### Games
+
+#### Get all games
 
 ```http
   GET /games
@@ -14,10 +11,18 @@ The main goal with this project was to start developing a better understanding o
 
 #
 
-#### Get Count Genre
+#### Get Games by Genre
 
 ```http
-  GET /genres
+  GET /games/count
+```
+
+#
+
+#### Get Games by Genre Id
+
+```http
+  GET /games/genre/id
 ```
 
 #
@@ -30,21 +35,29 @@ body:
 ```
   {
     "name" : "Settlement Survival",
-    "plataform" : "Steam",
-    "genre" : "Strategy"
+    "plataform": "Steam",
+    "genreId": 1
   }
 ```
 
 #
 
-#### Update Game
+#### Add to Wishlist or Rate Game
 ```http
-  PATCH /games/id
+  POST /games/wishlist/id
 ```
-body: 
+[body] Add on Wishlist: 
 ```
   {
-    "rating" : 6
+    "idUser": 1
+  }
+```
+
+[body] Rate Game: 
+```
+  {
+    "idUser": 1
+    "rating": 6
   }
 ```
 
@@ -53,4 +66,72 @@ body:
 #### Delete Game
 ```http
   DELETE /games/id
+```
+
+### Genres
+
+#### Get all genres
+
+```http
+  GET /genres
+```
+
+#
+
+#### Insert genre
+
+```http
+  POST /genres
+```
+body: 
+```
+  {
+    "type" : "Strategy"
+  }
+```
+#
+
+#### Delete Genre
+```http
+  DELETE /genres/id
+```
+
+#
+
+### Users
+
+#### Get all users
+
+```http
+  GET /users
+```
+
+#
+
+#### Get all games in wishlist by user id
+
+```http
+  GET /users/id/wishlist
+```
+
+#
+
+#### Insert user
+
+```http
+  POST /users
+```
+body: 
+```
+  {
+    "name" : "João",
+	"email" : "joao@hotmail.com",
+	"password" : "123456"
+  }
+```
+#
+
+#### Delete Genre
+```http
+  DELETE /users/id
 ```
