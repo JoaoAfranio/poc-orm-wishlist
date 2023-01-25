@@ -125,8 +125,8 @@ body:
 ```
   {
     "name" : "João",
-	"email" : "joao@hotmail.com",
-	"password" : "123456"
+    "email" : "joao@hotmail.com",
+    "password" : "123456"
   }
 ```
 #
